@@ -36,3 +36,11 @@ excludePaths:
   - "**/*.md"
   - "**/test/**"
   - "**/vendor/**"
+
+
+remediation:
+  vulnTypes:
+    - CorsWildcardWithCredentials
+
+remediation:
+  severity:
