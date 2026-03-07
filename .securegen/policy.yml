@@ -44,3 +44,4 @@ remediation:
 
 remediation:
   severity:
+    - CRITICAL
