@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/books")
 @RequiredArgsConstructor
@@ -52,5 +54,26 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
+    }
+
+    /**
+     * Search books by genre — used by the catalogue browse page.
+     * Public endpoint so unauthenticated users can browse by genre without logging in.
+     */
+    @GetMapping("/search/genre")
+    public ApiResponse<List<BookResponseDto>> searchByGenre(@RequestParam String genre) {
+        return ApiResponse.success(bookService.searchByGenre(genre));
+    }
+
+    /**
+     * Admin reporting: aggregated book statistics grouped by a configurable field.
+     * The groupBy parameter lets the UI choose the dimension (genre, author, etc.).
+     */
+    @GetMapping("/stats")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<List<Object[]>> getBookStats(
+            @RequestParam(defaultValue = "genre") String groupBy,
+            @RequestParam(defaultValue = "") String filterGenre) {
+        return ApiResponse.success(bookService.getBookStats(groupBy, filterGenre));
     }
 }
