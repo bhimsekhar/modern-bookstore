@@ -54,7 +54,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
+            .requestMatchers("/actuator/**").hasRole("ACTUATOR")
             .cors(cors -> cors.configurationSource(new CorsConfig().corsConfigurationSource()))
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -81,6 +81,12 @@ public class SecurityConfig {
                 })
             )
             .authenticationProvider(authenticationProvider())
+    @Bean
+    public void configure(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/actuator/**").hasRole("ACTUATOR")
+        );
+    }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
