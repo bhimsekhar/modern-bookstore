@@ -40,7 +40,7 @@ excludePaths:
 
 remediation:
   vulnTypes:
-    - CorsWildcardWithCredentials
+    - ActuatorEndpointsExposed
 
 remediation:
   severity:
