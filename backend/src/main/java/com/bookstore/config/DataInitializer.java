@@ -34,7 +34,7 @@ public class DataInitializer implements CommandLineRunner {
                     .username("admin")
                     .password(passwordEncoder.encode("Admin123"))
                     .firstname("System")
-                    .lastname("Admin")
+                    .password(passwordEncoder.encode(System.getProperty("admin.password", "Admin123")))
                     .email("admin@bookstore.com")
                     .roles(Set.of(adminRole))
                     .build();
@@ -49,7 +49,7 @@ public class DataInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode("Employee123"))
                     .firstname("Jane")
                     .lastname("Smith")
-                    .email("employee1@bookstore.com")
+                    .password(passwordEncoder.encode(System.getProperty("employee.password", "Employee123")))
                     .roles(Set.of(employeeRole))
                     .build();
             userRepository.save(emp);
@@ -63,4 +63,5 @@ public class DataInitializer implements CommandLineRunner {
             return roleRepository.save(role);
         });
     }
-}
+        log.info("Default admin user created: username=admin");
+        log.info("Default employee user created: username=employee1");
