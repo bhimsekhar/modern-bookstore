@@ -1,0 +1,38 @@
+# SecureGen Policy — bhimsekhar/modern-bookstore
+# Generated default policy. Customise as needed.
+
+autoRemediate:
+  enabled: true
+  minSeverity: HIGH
+  maxAutoFixEffort: MEDIUM
+
+severityThreshold: MEDIUM
+
+pull_request:
+  strategy: per-vuln
+  branch_prefix: securegen/fix
+
+autoMerge:
+  enabled: true
+  maxSeverity: HIGH
+  requirePassingChecks: true
+
+autoClose:
+  enabled: true
+  staleDays: 30
+
+notifications:
+  prComment: true
+  slackChannel: ""
+
+allowedCwe:
+  - CWE-89    # SQL Injection
+  - CWE-79    # XSS
+  - CWE-22    # Path Traversal
+  - CWE-798   # Hardcoded Credentials
+  - CWE-306   # Missing Authentication
+
+excludePaths:
+  - "**/*.md"
+  - "**/test/**"
+  - "**/vendor/**"
