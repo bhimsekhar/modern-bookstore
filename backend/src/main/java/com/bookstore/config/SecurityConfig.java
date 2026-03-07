@@ -53,7 +53,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+                .requestMatchers("/actuator/**").authenticated()
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(new CorsConfig().corsConfigurationSource()))
             .sessionManagement(session ->
@@ -72,6 +72,18 @@ public class SecurityConfig {
                     response.getWriter().write(mapper.writeValueAsString(
                         Map.of("status", "error", "message", "Authentication required")));
                 })
+    
+    http.addFilterBefore(new ActuatorFilter(), FilterSecurityInterceptor.class);
+}
+
+private class ActuatorFilter extends OncePerRequestFilter {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (request.getRequestURI().startsWith("/actuator/")) {
+            SecurityContextHolder.getContext().setAuthentication(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("actuator", "actuator")));
+        }
+        filterChain.doFilter(request, response);
+    }
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.setStatus(403);
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
