@@ -8,6 +8,7 @@ import { bookSchema, type BookFormData } from '../../schemas/bookSchema';
 interface BookFormProps {
   defaultValues?: Partial<BookFormData>;
   onSubmit: (data: BookFormData) => void;
+import DOMPurify from 'dompurify';
   isSubmitting: boolean;
   title: string;
 }
@@ -64,7 +65,15 @@ export default function BookForm({ defaultValues, onSubmit, isSubmitting, title 
               className="border rounded p-3 bg-light min-vh-5"
               style={{ minHeight: '60px' }}
               dangerouslySetInnerHTML={{
-                __html: descriptionValue || '<em class="text-muted">No description yet...</em>',
+            <div dangerouslySetInnerHTML={{
+            <div ref={(div) => {
+              if (div) {
+                const text = descriptionValue || '<em class="text-muted">No description yet...</em>';
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = text;
+                div.innerText = tempDiv.textContent;
+              }
+            }}
               }}
             />
           </div>
