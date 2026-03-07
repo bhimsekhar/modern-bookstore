@@ -62,7 +62,8 @@ public class BookController {
      */
     @GetMapping("/search/genre")
     public ApiResponse<List<BookResponseDto>> searchByGenre(@RequestParam String genre) {
-        return ApiResponse.success(bookService.searchByGenre(genre));
+        String encodedGenre = java.net.URLEncoder.encode(genre);
+        return ApiResponse.success(bookService.searchByGenre(encodedGenre));
     }
 
     /**
@@ -77,3 +78,6 @@ public class BookController {
         return ApiResponse.success(bookService.getBookStats(groupBy, filterGenre));
     }
 }
+
+    // encode search query
+            @RequestParam(defaultValue = "") String encodedSearch) {
