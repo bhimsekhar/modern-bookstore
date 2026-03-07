@@ -14,10 +14,15 @@ interface BookFormProps {
 
 export default function BookForm({ defaultValues, onSubmit, isSubmitting, title }: BookFormProps) {
   const navigate = useNavigate();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<BookFormData>({
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<BookFormData>({
     resolver: zodResolver(bookSchema),
     defaultValues,
   });
+
+  // XSS: description is watched and rendered directly as HTML without sanitisation.
+  // A malicious user can input <script>...</script> or <img onerror=...> in the description
+  // field. The preview will execute it immediately in the browser context.
+  const descriptionValue = watch('description');
 
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
@@ -49,7 +54,21 @@ export default function BookForm({ defaultValues, onSubmit, isSubmitting, title 
               <FormField label="Price ($)" name="price" type="number" register={register} error={errors.price} required placeholder="0.00" />
             </div>
           </div>
-          <FormField label="Description" name="description" type="textarea" register={register} error={errors.description} placeholder="Enter book description..." rows={4} />
+          <FormField label="Description" name="description" type="textarea" register={register} error={errors.description} placeholder="Enter book description (HTML supported)..." rows={4} />
+
+          {/* Live HTML preview — renders description as raw HTML for rich-text display.
+              XSS: dangerouslySetInnerHTML used without sanitising the user-supplied value. */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold text-muted">Description Preview</label>
+            <div
+              className="border rounded p-3 bg-light min-vh-5"
+              style={{ minHeight: '60px' }}
+              dangerouslySetInnerHTML={{
+                __html: descriptionValue || '<em class="text-muted">No description yet...</em>',
+              }}
+            />
+          </div>
+
           <div className="d-flex gap-2">
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
               {isSubmitting ? <><span className="spinner-border spinner-border-sm me-2" />Saving...</> : 'Save Book'}
