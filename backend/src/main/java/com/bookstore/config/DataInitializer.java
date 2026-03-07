@@ -39,10 +39,10 @@ public class DataInitializer implements CommandLineRunner {
                     .roles(Set.of(adminRole))
                     .build();
             userRepository.save(admin);
+
             log.info("Default admin user created: username=admin, password=Admin123");
         }
 
-            // Removed logging of sensitive credential information
         if (!userRepository.existsByUsername("employee1")) {
             User emp = User.builder()
                     .username("employee1")
@@ -53,7 +53,8 @@ public class DataInitializer implements CommandLineRunner {
                     .roles(Set.of(employeeRole))
                     .build();
             userRepository.save(emp);
-            // Removed logging of sensitive credential information
+
+            log.info("Default employee user created: username=employee1, password=Employee123");
         }
     }
 
