@@ -54,13 +54,18 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             userRepository.save(emp);
             log.info("Default employee user created: username=employee1, password=Employee123");
-        }
-    }
-
+                    .firstname("System")
+                    .lastname("Admin")
+                    .email("admin@bookstore.com")
     private Role seedRole(String name) {
         return roleRepository.findByName(name).orElseGet(() -> {
             Role role = Role.builder().name(name).build();
-            return roleRepository.save(role);
+            log.info("Default admin user created: username=admin");
         });
     }
 }
+
+                    .firstname("Jane")
+                    .lastname("Smith")
+                    .email("employee1@bookstore.com")
+            log.info("Default employee user created: username=employee1");
