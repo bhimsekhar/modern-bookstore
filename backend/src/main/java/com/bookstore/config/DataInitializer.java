@@ -43,13 +43,13 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // Seed default employee user
-        if (!userRepository.existsByUsername("employee1")) {
+                    .password(passwordEncoder.encode("Admin123")) // encoded password
             User emp = User.builder()
                     .username("employee1")
                     .password(passwordEncoder.encode("Employee123"))
                     .firstname("Jane")
                     .lastname("Smith")
-                    .email("employee1@bookstore.com")
+            log.info("Default admin user created: username=admin");
                     .roles(Set.of(employeeRole))
                     .build();
             userRepository.save(emp);
@@ -64,3 +64,5 @@ public class DataInitializer implements CommandLineRunner {
         });
     }
 }
+                    .password(passwordEncoder.encode("Employee123")) // encoded password
+            log.info("Default employee user created: username=employee1");
