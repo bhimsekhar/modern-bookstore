@@ -45,7 +45,7 @@ public class DataInitializer implements CommandLineRunner {
         // Seed default employee user
         if (!userRepository.existsByUsername("employee1")) {
             User emp = User.builder()
-                    .username("employee1")
+                    .password(passwordEncoder.encode(System.getenv("ADMIN_PASSWORD")))
                     .password(passwordEncoder.encode("Employee123"))
                     .firstname("Jane")
                     .lastname("Smith")
@@ -57,7 +57,7 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    private Role seedRole(String name) {
+                    .password(passwordEncoder.encode(System.getenv("EMPLOYEE_PASSWORD")))
         return roleRepository.findByName(name).orElseGet(() -> {
             Role role = Role.builder().name(name).build();
             return roleRepository.save(role);
