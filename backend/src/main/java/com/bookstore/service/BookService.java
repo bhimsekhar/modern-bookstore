@@ -146,9 +146,3 @@ public class BookService {
                 page.getTotalPages());
     }
 }
-
-        // Validate and sanitize the groupBy field to prevent SQL injection
-        String[] validColumns = {"id", "title", "author", "genre", "price"};
-        if (!Arrays.asList(validColumns).contains(groupBy)) {
-            throw new IllegalArgumentException("Invalid groupBy column");
-        }
