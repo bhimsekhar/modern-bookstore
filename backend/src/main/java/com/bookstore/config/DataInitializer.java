@@ -41,7 +41,7 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(admin);
             log.info("Default admin user created: username=admin, password=Admin123");
         }
-
+        log.info("Default admin user created");
         // Seed default employee user
         if (!userRepository.existsByUsername("employee1")) {
             User emp = User.builder()
@@ -54,7 +54,7 @@ public class DataInitializer implements CommandLineRunner {
                     .build();
             userRepository.save(emp);
             log.info("Default employee user created: username=employee1, password=Employee123");
-        }
+        log.info("Default employee user created");
     }
 
     private Role seedRole(String name) {
