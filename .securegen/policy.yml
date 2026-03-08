@@ -45,3 +45,6 @@ remediation:
 remediation:
   severity:
     - HIGH
+
+securegen:
+  processingMode: MANUAL
