@@ -44,7 +44,9 @@ remediation:
 
 remediation:
   severity:
+    - CRITICAL
     - HIGH
+    - MEDIUM
 
 securegen:
   processingMode: MANUAL
