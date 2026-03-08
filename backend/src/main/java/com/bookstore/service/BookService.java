@@ -22,7 +22,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+        // Define a whitelist of allowed sort fields
+        String[] allowedSortFields = {"id", "title", "author", "genre", "description", "copy", "price"};
+        // Check if the provided sort field is in the whitelist
+        if (!isValidSortField(sortField, allowedSortFields)) {
+            throw new IllegalArgumentException("Invalid sort field: " + sortField);
+        }
+        Sort sort = sortDir.equalsIgnoreCase("desc")
 public class BookService {
 
     private final BookRepository bookRepository;
@@ -145,4 +151,13 @@ public class BookService {
                 page.getTotalElements(),
                 page.getTotalPages());
     }
+    }
+
+    private boolean isValidSortField(String sortField, String[] allowedSortFields) {
+        for (String field : allowedSortFields) {
+            if (field.equalsIgnoreCase(sortField)) {
+                return true;
+            }
+        }
+        return false;
 }
