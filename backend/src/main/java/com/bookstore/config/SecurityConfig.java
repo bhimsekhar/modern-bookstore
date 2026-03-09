@@ -53,7 +53,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+                .requestMatchers("/actuator/**").hasRole("ACTUATOR")
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(new CorsConfig().corsConfigurationSource()))
             .sessionManagement(session ->
@@ -63,11 +63,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/v1/feedback").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
+        http.authorizeHttpRequests(auth -> auth.hasRole("ACTUATOR"));
             )
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(401);
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    @Bean
+    public void actuatorRole() {
                     ObjectMapper mapper = new ObjectMapper();
                     response.getWriter().write(mapper.writeValueAsString(
                         Map.of("status", "error", "message", "Authentication required")));
