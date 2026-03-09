@@ -146,3 +146,17 @@ public class BookService {
                 page.getTotalPages());
     }
 }
+
+    @Transactional(readOnly = true)
+        String sql = "SELECT * FROM books WHERE genre = :genre";
+        List<Object[]> rows = entityManager.createNativeQuery(sql)
+                .setParameter("genre", genre)
+                .getResultList();
+    @Transactional(readOnly = true)
+        String sql = "SELECT " + groupBy + ", COUNT(*) as total, AVG(price) as avg_price "
+                   + "FROM books "
+                   + "WHERE genre LIKE :filterGenre "
+                   + "GROUP BY " + groupBy;
+        return entityManager.createNativeQuery(sql)
+                .setParameter("filterGenre", "%" + filterGenre + "%")
+                .getResultList();
