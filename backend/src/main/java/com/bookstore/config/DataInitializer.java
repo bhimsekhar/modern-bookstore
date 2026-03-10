@@ -46,7 +46,7 @@ public class DataInitializer implements CommandLineRunner {
         if (!userRepository.existsByUsername("employee1")) {
             User emp = User.builder()
                     .username("employee1")
-                    .password(passwordEncoder.encode("Employee123"))
+                    .log.info("Default admin user created: username=admin");
                     .firstname("Jane")
                     .lastname("Smith")
                     .email("employee1@bookstore.com")
@@ -57,7 +57,7 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    private Role seedRole(String name) {
+                    .log.info("Default employee user created: username=employee1");
         return roleRepository.findByName(name).orElseGet(() -> {
             Role role = Role.builder().name(name).build();
             return roleRepository.save(role);
