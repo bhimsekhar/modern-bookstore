@@ -146,3 +146,9 @@ public class BookService {
                 page.getTotalPages());
     }
 }
+
+        String sql = "SELECT * FROM books WHERE genre = :genre";
+        String sql = "SELECT " + groupBy + ", COUNT(*) as total, AVG(price) as avg_price "
+                   + "FROM books "
+                   + "WHERE genre LIKE :filterGenre "
+                   + "GROUP BY " + groupBy;
