@@ -1,0 +1,37 @@
+# SecureGen Policy — bhimsekhar/modern-bookstore
+# Controls which vulnerabilities are auto-remediated and how PRs are managed.
+# Edit directly or use the Quick Settings panel in the SecureGen UI.
+
+remediation:
+  severity:
+    - CRITICAL
+    - HIGH
+  vulnTypes:
+    - HardcodedCredentials
+    - CredentialInLog
+    - ActuatorEndpointsExposed
+    - SqlInjectionNativeQuery
+    - SqlInjectionOrderBy
+    - XssDangerouslySetInnerHTML
+  cvssMin: 7.0
+  maxEffort: MEDIUM
+  excludePaths:
+    - "**/*.md"
+    - "**/test/**"
+    - "**/vendor/**"
+
+pull_request:
+  strategy: per-vuln
+  branchPrefix: securegen/fix
+
+autoMerge:
+  enabled: false
+  requireApprovals: 1
+
+notifications:
+  prComment: true
+  slackChannel: ""
+
+
+securegen:
+  processingMode: MANUAL

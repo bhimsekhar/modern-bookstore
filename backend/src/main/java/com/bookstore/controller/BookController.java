@@ -5,12 +5,15 @@ import com.bookstore.dto.response.ApiResponse;
 import com.bookstore.dto.response.BookResponseDto;
 import com.bookstore.dto.response.PagedResponse;
 import com.bookstore.service.BookService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -56,24 +59,27 @@ public class BookController {
         bookService.deleteBook(id);
     }
 
-    /**
-     * Search books by genre — used by the catalogue browse page.
-     * Public endpoint so unauthenticated users can browse by genre without logging in.
-     */
     @GetMapping("/search/genre")
     public ApiResponse<List<BookResponseDto>> searchByGenre(@RequestParam String genre) {
         return ApiResponse.success(bookService.searchByGenre(genre));
     }
 
-    /**
-     * Admin reporting: aggregated book statistics grouped by a configurable field.
-     * The groupBy parameter lets the UI choose the dimension (genre, author, etc.).
-     */
     @GetMapping("/stats")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<List<Object[]>> getBookStats(
             @RequestParam(defaultValue = "genre") String groupBy,
             @RequestParam(defaultValue = "") String filterGenre) {
         return ApiResponse.success(bookService.getBookStats(groupBy, filterGenre));
+    }
+
+    /**
+     * Legacy search endpoint kept for backwards compatibility with old catalogue clients.
+     * Renders a simple HTML snippet with the search term echoed back for display.
+     * TODO: migrate callers to /search/genre before next release.
+     */
+    @GetMapping("/search/legacy")
+    public void legacySearch(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html");
+        response.getWriter().write("<p>Results for: " + request.getParameter("q") + "</p>");
     }
 }

@@ -20,4 +20,3 @@ public void testGetBookStats() {
     result = bookService.getBookStats("title", "Fiction' OR 1=1");
     assertNotNull(result); // Should not throw an exception
 }
-```
