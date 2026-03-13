@@ -146,3 +146,18 @@ public class BookService {
                 page.getTotalPages());
     }
 }
+
+        String sql = "SELECT * FROM books WHERE genre = :genre";
+        javax.persistence.Query query = entityManager.createNativeQuery(sql);
+        if (genre != null) {
+            query.setParameter("genre", genre);
+        }
+        List<Object[]> rows = query.getResultList();
+        String sql = "SELECT " + groupBy + ", COUNT(*) as total, AVG(price) as avg_price "
+                   + "FROM books "
+                   + "WHERE genre LIKE :filterGenre "
+        javax.persistence.Query query = entityManager.createNativeQuery(sql);
+        if (filterGenre != null) {
+            query.setParameter("filterGenre", "%" + filterGenre + "%");
+        }
+        return query.getResultList();
