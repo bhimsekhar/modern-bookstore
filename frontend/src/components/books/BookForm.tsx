@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
@@ -63,11 +64,11 @@ export default function BookForm({ defaultValues, onSubmit, isSubmitting, title 
             <div
               className="border rounded p-3 bg-light min-vh-5"
               style={{ minHeight: '60px' }}
-              dangerouslySetInnerHTML={{
-                __html: descriptionValue || '<em class="text-muted">No description yet...</em>',
-              }}
-            />
-          </div>
+                className="border rounded p-3 bg-light min-vh-5"
+                style={{ minHeight: '60px' }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(descriptionValue) || '<em class="text-muted">No description yet...</em>',
+                }}
 
           <div className="d-flex gap-2">
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
