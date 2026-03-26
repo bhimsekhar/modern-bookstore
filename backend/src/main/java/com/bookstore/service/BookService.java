@@ -146,3 +146,35 @@ public class BookService {
                 page.getTotalPages());
     }
 }
+
+        String sql = "SELECT " + groupBy + ", COUNT(*) as total, AVG(price) as avg_price "
+                   + "FROM books "
+                   + "WHERE genre LIKE :filterGenre "
+                   + "GROUP BY " + groupBy;
+        javax.persistence.Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("filterGenre", "%" + filterGenre + "%");
+        return query.getResultList();
+    public List<BookResponseDto> searchByGenre(String genre) {
+        String sql = "SELECT * FROM books WHERE genre = :genre";
+        javax.persistence.Query query = entityManager.createNativeQuery(sql);
+        query.setParameter("genre", genre);
+        List<Object[]> rows = query.getResultList();
+        return rows.stream().map(this::rowToDto).toList();
+    }
+
+    // Add validation to prevent SQL injection attacks
+    private void validateGroupBy(String groupBy) {
+        if (!isValidColumn(groupBy)) {
+            throw new IllegalArgumentException("Invalid groupBy column");
+        }
+    }
+
+    private boolean isValidColumn(String column) {
+        // For this example, we're assuming valid columns are title, author, genre, etc.
+        String[] validColumns = {"title", "author", "genre", "description", "copy", "price"};
+        for (String validColumn : validColumns) {
+            if (column.equalsIgnoreCase(validColumn)) {
+                return true;
+            }
+        }
+        return false;
