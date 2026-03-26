@@ -80,8 +80,8 @@ public class BookService {
 
         return toDto(bookRepository.save(book));
     }
-
-    public void deleteBook(Long id) {
+        String sql = "SELECT * FROM books WHERE genre = :genre";
+        List<Object[]> rows = entityManager.createNativeQuery(sql).setParameter("genre", genre).getResultList();
         if (!bookRepository.existsById(id)) {
             throw new ResourceNotFoundException("Book", "id", id);
         }
