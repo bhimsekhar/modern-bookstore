@@ -65,9 +65,9 @@ export default function BookForm({ defaultValues, onSubmit, isSubmitting, title 
               style={{ minHeight: '60px' }}
               className="border rounded p-3 bg-light min-vh-5"
               style={{ minHeight: '60px' }}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(descriptionValue) || '<em class="text-muted">No description yet...</em>',
-              }}
+            dangerouslySetInnerHTML={{
+              __html: descriptionValue ? DOMPurify.sanitize(descriptionValue) : '<em class="text-muted">No description yet...</em>',
+            }}
 
           <div className="d-flex gap-2">
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
