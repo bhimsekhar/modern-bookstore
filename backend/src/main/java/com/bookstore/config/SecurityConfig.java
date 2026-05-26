@@ -51,7 +51,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
+            .requestMatchers("/actuator/**").hasRole("ACTUATOR")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 .requestMatchers("/actuator/**").authenticated()
             .csrf(AbstractHttpConfigurer::disable)
