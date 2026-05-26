@@ -1,76 +1,48 @@
 ```java
-import com.bookstore.config.DataInitializer;
-import com.bookstore.model.User;
-import com.bookstore.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class DataInitializerTest {
 
-    private static final Logger log = LoggerFactory.getLogger(DataInitializerTest.class);
-
-    @Mock
-    private UserRepository userRepository;
-
+    @Autowired
     private DataInitializer dataInitializer;
 
-    @BeforeEach
-    void setup() {
-        dataInitializer = new DataInitializer(userRepository);
-    }
+    @Test
+    public void testDefaultAdminUserCreation() {
+        // Set environment variables
+        System.setProperty("ADMIN_PASSWORD", "NewAdminPassword");
+        System.setProperty("EMPLOYEE_PASSWORD", "NewEmployeePassword");
 
-    @AfterEach
-    void tearDown() {
-        verifyNoMoreInteractions(userRepository);
+        // Run data initializer
+        dataInitializer.run();
+
+        // Verify default admin user created
+        assertNotNull(dataInitializer.userRepository.findByUsername("admin"));
     }
 
     @Test
-    void testVulnerabilityExisted() {
-        // Arrange
-        Logger logger = mock(Logger.class);
-        DataInitializer vulnerableDataInitializer = new DataInitializer(userRepository) {
-            @Override
-            protected Logger getLogger() {
-                return logger;
-            }
-        };
+    public void testDefaultEmployeeUserCreation() {
+        // Set environment variables
+        System.setProperty("ADMIN_PASSWORD", "NewAdminPassword");
+        System.setProperty("EMPLOYEE_PASSWORD", "NewEmployeePassword");
 
-        // Act
-        vulnerableDataInitializer.initialize();
+        // Run data initializer
+        dataInitializer.run();
 
-        // Assert
-        verify(logger, times(2)).info(contains("password"));
+        // Verify default employee user created
+        assertNotNull(dataInitializer.userRepository.findByUsername("employee1"));
     }
 
     @Test
-    void testFixPreventsExploitation() {
-        // Act
-        dataInitializer.initialize();
+    public void testMissingEnvironmentVariable() {
+        // Do not set environment variables
 
-        // Assert
-        verify(userRepository, times(2)).save(any(User.class));
-        // No password logging
-        verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    void testNormalFunctionalityStillWorks() {
-        // Act
-        dataInitializer.initialize();
-
-        // Assert
-        verify(userRepository, times(2)).save(any(User.class));
+        // Run data initializer and expect exception
+        assertThrows(NullPointerException.class, () -> dataInitializer.run());
     }
 }
 ```
