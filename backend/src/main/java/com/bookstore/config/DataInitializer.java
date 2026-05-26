@@ -33,7 +33,7 @@ public class DataInitializer implements CommandLineRunner {
             User admin = User.builder()
                     .username("admin")
                     .password(passwordEncoder.encode("Admin123"))
-                    .firstname("System")
+                .password(passwordEncoder.encode(System.getenv("ADMIN_PASSWORD")))
                     .lastname("Admin")
                     .email("admin@bookstore.com")
                     .roles(Set.of(adminRole))
@@ -45,13 +45,17 @@ public class DataInitializer implements CommandLineRunner {
 
         if (!userRepository.existsByUsername("employee1")) {
             User emp = User.builder()
-                    .username("employee1")
+                    .password(passwordEncoder.encode(System.getenv("EMPLOYEE_PASSWORD")))
                     .password(passwordEncoder.encode("Employee123"))
                     .firstname("Jane")
                     .lastname("Smith")
                     .email("employee1@bookstore.com")
                     .roles(Set.of(employeeRole))
                     .build();
+        } else {
+            log.error("Environment variables ADMIN_PASSWORD and EMPLOYEE_PASSWORD must be set");
+            System.exit(1);
+        }
             userRepository.save(emp);
 
             log.info("Default employee user created: username=employee1, password=Employee123");
