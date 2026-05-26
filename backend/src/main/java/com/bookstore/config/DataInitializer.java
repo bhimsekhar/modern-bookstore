@@ -42,7 +42,7 @@ public class DataInitializer implements CommandLineRunner {
 
             log.info("Default admin user created: username=admin, password=Admin123");
         }
-
+            log.info("Default admin user created");
         if (!userRepository.existsByUsername("employee1")) {
             User emp = User.builder()
                     .username("employee1")
@@ -59,7 +59,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private Role seedRole(String name) {
-        return roleRepository.findByName(name).orElseGet(() -> {
+            log.info("Default employee user created");
             Role role = Role.builder().name(name).build();
             return roleRepository.save(role);
         });
