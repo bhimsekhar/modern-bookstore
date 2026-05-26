@@ -1,22 +1,37 @@
 ```java
 @Test
 public void testSearchByGenre() {
-    // Test with a normal genre
-    List<BookResponseDto> result = bookService.searchByGenre("Fiction");
-    assertNotNull(result);
+    // Test with a valid genre
+    List<BookResponseDto> results = bookService.searchByGenre("Fiction");
+    assertNotNull(results);
+    assertTrue(results.size() > 0);
 
-    // Test with a malicious genre
-    result = bookService.searchByGenre("Fiction' OR 1=1");
-    assertNotNull(result); // Should not throw an exception
+    // Test with an invalid genre
+    results = bookService.searchByGenre("Invalid");
+    assertNotNull(results);
+    assertTrue(results.size() == 0);
+
+    // Test with a genre containing special characters
+    results = bookService.searchByGenre("Fiction'");
+    assertNotNull(results);
+    assertTrue(results.size() > 0);
 }
 
 @Test
 public void testGetBookStats() {
-    // Test with a normal groupBy and filterGenre
-    List<Object[]> result = bookService.getBookStats("title", "Fiction");
-    assertNotNull(result);
+    // Test with a valid groupBy and filterGenre
+    List<Object[]> results = bookService.getBookStats("genre", "Fiction");
+    assertNotNull(results);
+    assertTrue(results.size() > 0);
 
-    // Test with a malicious groupBy and filterGenre
-    result = bookService.getBookStats("title", "Fiction' OR 1=1");
-    assertNotNull(result); // Should not throw an exception
+    // Test with an invalid groupBy
+    results = bookService.getBookStats("invalid", "Fiction");
+    assertNotNull(results);
+    assertTrue(results.size() == 0);
+
+    // Test with a filterGenre containing special characters
+    results = bookService.getBookStats("genre", "Fiction'");
+    assertNotNull(results);
+    assertTrue(results.size() > 0);
 }
+```
