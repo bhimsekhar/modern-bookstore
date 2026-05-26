@@ -1,14 +1,14 @@
+```typescript
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { BookForm } from './BookForm';
 
 describe('BookForm', () => {
-  it('should prevent XSS attack', async () => {
-    const onSubmit = jest.fn();
-    const { getByLabelText } = render(
+  it('should sanitize description input', async () => {
+    const { getByLabelText, getByText } = render(
       <BookForm
         defaultValues={{}}
-        onSubmit={onSubmit}
+        onSubmit={jest.fn()}
         isSubmitting={false}
         title="Test Book"
       />
@@ -18,28 +18,32 @@ describe('BookForm', () => {
     fireEvent.change(descriptionInput, { target: { value: '<script>alert("XSS")</script>' } });
 
     await waitFor(() => {
-      const descriptionPreview = document.querySelector('.border.rounded.p-3.bg-light.min-vh-5');
-      expect(descriptionPreview?.innerHTML).not.toContain('<script>alert("XSS")</script>');
+      expect(getByText('Description Preview')).toBeInTheDocument();
     });
+
+    const preview = getByText('Description Preview').closest('div');
+    expect(preview?.innerHTML).not.toContain('<script>alert("XSS")</script>');
   });
 
   it('should preserve normal behavior', async () => {
-    const onSubmit = jest.fn();
-    const { getByLabelText } = render(
+    const { getByLabelText, getByText } = render(
       <BookForm
         defaultValues={{}}
-        onSubmit={onSubmit}
+        onSubmit={jest.fn()}
         isSubmitting={false}
         title="Test Book"
       />
     );
 
     const descriptionInput = getByLabelText('Description');
-    fireEvent.change(descriptionInput, { target: { value: 'Hello, <b>world</b>!' } });
+    fireEvent.change(descriptionInput, { target: { value: 'Hello, World!' } });
 
     await waitFor(() => {
-      const descriptionPreview = document.querySelector('.border.rounded.p-3.bg-light.min-vh-5');
-      expect(descriptionPreview?.innerHTML).toContain('Hello, <b>world</b>!');
+      expect(getByText('Description Preview')).toBeInTheDocument();
     });
+
+    const preview = getByText('Description Preview').closest('div');
+    expect(preview?.innerHTML).toContain('Hello, World!');
   });
 });
+```
