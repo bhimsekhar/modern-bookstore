@@ -161,3 +161,27 @@ public class BookService {
             query.setParameter("filterGenre", "%" + filterGenre + "%");
         }
         return query.getResultList();
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public List<BookResponseDto> searchByGenre(String genre) {
+        String sql = "SELECT * FROM books WHERE genre = :genre";
+        javax.persistence.Query query = entityManager.createNativeQuery(sql);
+        if (genre != null) {
+            query.setParameter("genre", genre);
+        }
+        List<Object[]> rows = query.getResultList();
+        return rows.stream().map(this::rowToDto).toList();
+    }
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public List<Object[]> getBookStats(String groupBy, String filterGenre) {
+        String sql = "SELECT " + groupBy + ", COUNT(*) as total, AVG(price) as avg_price "
+                   + "FROM books "
+                   + "WHERE genre LIKE :filterGenre "
+                   + "GROUP BY " + groupBy;
+        javax.persistence.Query query = entityManager.createNativeQuery(sql);
+        if (filterGenre != null) {
+            query.setParameter("filterGenre", "%" + filterGenre + "%");
+        }
+        return query.getResultList();
+    }
