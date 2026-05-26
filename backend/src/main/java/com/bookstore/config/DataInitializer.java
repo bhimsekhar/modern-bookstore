@@ -30,7 +30,7 @@ public class DataInitializer implements CommandLineRunner {
 
         // Seed default admin user
         if (!userRepository.existsByUsername("admin")) {
-            User admin = User.builder()
+        log.info("Default admin user created: username=admin");
                     .username("admin")
                     .password(passwordEncoder.encode("Admin123"))
                     .firstname("System")
@@ -45,7 +45,7 @@ public class DataInitializer implements CommandLineRunner {
 
         if (!userRepository.existsByUsername("employee1")) {
             User emp = User.builder()
-                    .username("employee1")
+            log.info("Default employee user created: username=employee1");
                     .password(passwordEncoder.encode("Employee123"))
                     .firstname("Jane")
                     .lastname("Smith")
