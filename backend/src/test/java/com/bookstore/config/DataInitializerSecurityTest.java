@@ -1,76 +1,38 @@
 ```java
-import com.bookstore.config.DataInitializer;
-import com.bookstore.model.User;
-import com.bookstore.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+@Test
+public void testDefaultAdminUserCreated() {
+    // Set environment variables
+    System.setProperty("ADMIN_PASSWORD", "TestAdmin123");
+    System.setProperty("EMPLOYEE_PASSWORD", "TestEmployee123");
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+    // Run DataInitializer
+    DataInitializer initializer = new DataInitializer(roleRepository, userRepository, passwordEncoder);
+    initializer.run();
 
-@ExtendWith(MockitoExtension.class)
-public class DataInitializerTest {
+    // Verify default admin user created
+    assertTrue(userRepository.existsByUsername("admin"));
+}
 
-    private static final Logger log = LoggerFactory.getLogger(DataInitializerTest.class);
+@Test
+public void testDefaultEmployeeUserCreated() {
+    // Set environment variables
+    System.setProperty("ADMIN_PASSWORD", "TestAdmin123");
+    System.setProperty("EMPLOYEE_PASSWORD", "TestEmployee123");
 
-    @Mock
-    private UserRepository userRepository;
+    // Run DataInitializer
+    DataInitializer initializer = new DataInitializer(roleRepository, userRepository, passwordEncoder);
+    initializer.run();
 
-    private DataInitializer dataInitializer;
+    // Verify default employee user created
+    assertTrue(userRepository.existsByUsername("employee1"));
+}
 
-    @BeforeEach
-    void setup() {
-        dataInitializer = new DataInitializer(userRepository);
-    }
+@Test(expected = RuntimeException.class)
+public void testEnvironmentVariablesNotSet() {
+    // Do not set environment variables
 
-    @AfterEach
-    void tearDown() {
-        verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    void testVulnerabilityExisted() {
-        // Arrange
-        Logger logger = mock(Logger.class);
-        DataInitializer vulnerableDataInitializer = new DataInitializer(userRepository) {
-            @Override
-            protected Logger getLogger() {
-                return logger;
-            }
-        };
-
-        // Act
-        vulnerableDataInitializer.initialize();
-
-        // Assert
-        verify(logger, times(2)).info(contains("password"));
-    }
-
-    @Test
-    void testFixPreventsExploitation() {
-        // Act
-        dataInitializer.initialize();
-
-        // Assert
-        verify(userRepository, times(2)).save(any(User.class));
-        // No password logging
-        verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    void testNormalFunctionalityStillWorks() {
-        // Act
-        dataInitializer.initialize();
-
-        // Assert
-        verify(userRepository, times(2)).save(any(User.class));
-    }
+    // Run DataInitializer
+    DataInitializer initializer = new DataInitializer(roleRepository, userRepository, passwordEncoder);
+    initializer.run();
 }
 ```
