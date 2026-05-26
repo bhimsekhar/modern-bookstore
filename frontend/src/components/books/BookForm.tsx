@@ -63,9 +63,7 @@ export default function BookForm({ defaultValues, onSubmit, isSubmitting, title 
             <div
               className="border rounded p-3 bg-light min-vh-5"
               style={{ minHeight: '60px' }}
-              className="border rounded p-3 bg-light min-vh-5"
-              style={{ minHeight: '60px' }}
-              dangerouslySetInnerHTML={{
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(descriptionValue || '<em class="text-muted">No description yet...</em>') }}
                 __html: DOMPurify.sanitize(descriptionValue) || '<em class="text-muted">No description yet...</em>',
               }}
 
