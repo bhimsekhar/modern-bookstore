@@ -1,22 +1,48 @@
 ```java
 @Test
 public void testSearchByGenre() {
-    // Test with a normal genre
-    List<BookResponseDto> result = bookService.searchByGenre("Fiction");
-    assertNotNull(result);
+    // Given
+    String genre = "Test Genre";
+    Book book = new Book();
+    book.setGenre(genre);
+    bookRepository.save(book);
 
-    // Test with a malicious genre
-    result = bookService.searchByGenre("Fiction' OR 1=1");
-    assertNotNull(result); // Should not throw an exception
+    // When
+    List<BookResponseDto> result = bookService.searchByGenre(genre);
+
+    // Then
+    assertNotNull(result);
+    assertTrue(result.size() > 0);
 }
 
 @Test
 public void testGetBookStats() {
-    // Test with a normal groupBy and filterGenre
-    List<Object[]> result = bookService.getBookStats("title", "Fiction");
-    assertNotNull(result);
+    // Given
+    String groupBy = "genre";
+    String filterGenre = "Test Genre";
+    Book book = new Book();
+    book.setGenre(filterGenre);
+    bookRepository.save(book);
 
-    // Test with a malicious groupBy and filterGenre
-    result = bookService.getBookStats("title", "Fiction' OR 1=1");
-    assertNotNull(result); // Should not throw an exception
+    // When
+    List<Object[]> result = bookService.getBookStats(groupBy, filterGenre);
+
+    // Then
+    assertNotNull(result);
+    assertTrue(result.size() > 0);
 }
+
+@Test
+public void testSqlInjection() {
+    // Given
+    String genre = "' OR 1=1 --";
+
+    // When
+    List<BookResponseDto> result = bookService.searchByGenre(genre);
+
+    // Then
+    assertNotNull(result);
+    // If the fix is correct, this should not return all books
+    assertTrue(result.size() == 0);
+}
+```
